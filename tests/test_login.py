@@ -13,7 +13,7 @@ def test_successful_login(page: Page):
     login_page.login(STANDARD_USER["username"], STANDARD_USER["password"])
     
     assert inventory_page.is_loaded()
-    assert inventory_page.get_product_count() == 9 # wrong number of products, should be 6
+    assert inventory_page.get_product_count() == 6
 
 def test_invalid_login(page: Page):
     """Test login with invalid credentials"""
