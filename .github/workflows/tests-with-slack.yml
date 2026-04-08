@@ -43,121 +43,27 @@ jobs:
       # Send Slack notification - SUCCESS
       - name: Send Slack notification (Success)
         if: steps.tests.outcome == 'success'
-        uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          PAYLOAD: |
-            {
-              "text": "✅ Tests PASSED - ${{ github.repository }}",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "✅ Tests Passed Successfully!"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Repository:*\\n${{ github.repository }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Branch:*\\n${{ github.ref_name }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Commit:*\\n${{ github.event.head_commit.message }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Author:*\\n${{ github.actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Details"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                    }
-                  ]
-                }
-              ]
-            }
-        with:
-          payload: ${{ env.PAYLOAD }}
+        run: |
+          payload=$(cat <<'JSON'
+          {
+            "text": "✅ Tests PASSED - ${{ github.repository }}\nBranch: ${{ github.ref_name }}\nAuthor: ${{ github.actor }}\nRun: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          JSON
+          )
+          curl --fail -X POST -H "Content-type: application/json" --data "$payload" "$SLACK_WEBHOOK_URL"
       
       # Send Slack notification - FAILURE
       - name: Send Slack notification (Failure)
         if: steps.tests.outcome == 'failure'
-        uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          PAYLOAD: |
-            {
-              "text": "❌ Tests FAILED - ${{ github.repository }}",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "❌ Tests Failed!"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Repository:*\\n${{ github.repository }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Branch:*\\n${{ github.ref_name }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Commit:*\\n${{ github.event.head_commit.message }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Author:*\\n${{ github.actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "⚠️ *Action Required:* Some tests failed. Please check the report and fix the issues."
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Failed Tests"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                      "style": "danger"
-                    }
-                  ]
-                }
-              ]
-            }
-        with:
-          payload: ${{ env.PAYLOAD }}
+        run: |
+          payload=$(cat <<'JSON'
+          {
+            "text": "❌ Tests FAILED - ${{ github.repository }}\nBranch: ${{ github.ref_name }}\nAuthor: ${{ github.actor }}\nRun: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          JSON
+          )
+          curl --fail -X POST -H "Content-type: application/json" --data "$payload" "$SLACK_WEBHOOK_URL"
