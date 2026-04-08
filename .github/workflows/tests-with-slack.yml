@@ -44,8 +44,10 @@ jobs:
       - name: Send Slack notification (Success)
         if: steps.tests.outcome == 'success'
         uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          PAYLOAD: |
             {
               "text": "✅ Tests PASSED - ${{ github.repository }}",
               "blocks": [
@@ -61,19 +63,19 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Repository:*\n${{ github.repository }}"
+                      "text": "*Repository:*\\n${{ github.repository }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Branch:*\n${{ github.ref_name }}"
+                      "text": "*Branch:*\\n${{ github.ref_name }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n${{ github.event.head_commit.message }}"
+                      "text": "*Commit:*\\n${{ github.event.head_commit.message }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Author:*\n${{ github.actor }}"
+                      "text": "*Author:*\\n${{ github.actor }}"
                     }
                   ]
                 },
@@ -92,16 +94,17 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: ${{ env.PAYLOAD }}
       
       # Send Slack notification - FAILURE
       - name: Send Slack notification (Failure)
         if: steps.tests.outcome == 'failure'
         uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          PAYLOAD: |
             {
               "text": "❌ Tests FAILED - ${{ github.repository }}",
               "blocks": [
@@ -117,19 +120,19 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Repository:*\n${{ github.repository }}"
+                      "text": "*Repository:*\\n${{ github.repository }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Branch:*\n${{ github.ref_name }}"
+                      "text": "*Branch:*\\n${{ github.ref_name }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n${{ github.event.head_commit.message }}"
+                      "text": "*Commit:*\\n${{ github.event.head_commit.message }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Author:*\n${{ github.actor }}"
+                      "text": "*Author:*\\n${{ github.actor }}"
                     }
                   ]
                 },
@@ -156,6 +159,5 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: ${{ env.PAYLOAD }}
