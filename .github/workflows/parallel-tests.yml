@@ -58,10 +58,9 @@ jobs:
       
       - name: Display summary
         run: |
-          echo ""## Test Results Summary"" >> $GITHUB_STEP_SUMMARY
-          echo """" >> $GITHUB_STEP_SUMMARY
-          echo ""Total jobs: 6 (3 OS × 2 Python)"" >> $GITHUB_STEP_SUMMARY
-          echo ""Status: ${{ needs.test.result }}"" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Total jobs: 6 (3 OS x 2 Python)" >> $GITHUB_STEP_SUMMARY
+          echo "Status: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
 
-    # Update workflow để cache dependencies
     
