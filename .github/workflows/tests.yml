@@ -1,0 +1,54 @@
+name: Playwright Tests
+
+# Khi nào workflow chạy
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+# Jobs cần thực hiện
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      # Bước 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Bước 2: Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      # Bước 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Bước 4: Install Playwright browsers
+      - name: Install Playwright browsers
+        run: python -m playwright install --with-deps chromium
+      
+      # Bước 5: Run tests
+      - name: Run Playwright tests
+        run: |
+          pytest tests/ \
+            --html=reports/test-report.html \
+            --self-contained-html \
+            -v
+      
+      # Bước 6: Upload test results (chạy dù pass hay fail)
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
